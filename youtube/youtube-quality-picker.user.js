@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Youtube Video Quality Picker
 // @namespace    https://github.com/WalterClementsJr
-// @version      0.1
+// @version      0.1.1
 // @description  add buttons to select video quality in 2 clicks less
 // @author       walterwalker
 // @downloadURL  https://github.com/WalterClementsJr/tampermonkey-scripts/blob/main/youtube/youtube-quality-picker.user.js
@@ -124,7 +124,7 @@
     let css = ".button-12 { display: flex; flex-direction: column; align-items: center; padding: 6px 14px; font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif; border-radius: 6px; border: none; background: #0f0f0f; box-shadow: 0px 0.5px 1px rgba(0, 0, 0, 0.1), inset 0px 0.5px 0.5px rgba(255, 255, 255, 0.5), 0px 0px 0px 0.5px rgba(0, 0, 0, 0.12); color: #DFDEDF; user-select: none; -webkit-user-select: none; touch-action: manipulation; } .button-12:focus { box-shadow: inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2), 0px 0.5px 1px rgba(0, 0, 0, 0.1), 0px 0px 0px 3.5px rgba(58, 108, 217, 0.5); outline: 0; }"
     GM_addStyle(css);
 
-    window.addEventListener('yt-page-data-updated', function () {
+    window.addEventListener('yt-navigate-finish', function () {
         console.log('page data reloaded');
         if (window.location.href !== "https://www.youtube.com/") {
             createButtons();
