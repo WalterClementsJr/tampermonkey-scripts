@@ -4,8 +4,8 @@
 // @version      0.1.1
 // @description  add buttons to select video quality in 2 clicks less
 // @author       walterwalker
-// @downloadURL  https://github.com/WalterClementsJr/tampermonkey-scripts/blob/main/youtube/youtube-quality-picker.user.js
-// @updateURL    https://github.com/WalterClementsJr/tampermonkey-scripts/blob/main/youtube/youtube-quality-picker.user.js
+// @downloadURL  https://github.com/WalterClementsJr/tampermonkey-scripts/raw/main/youtube/youtube-quality-picker.user.js
+// @updateURL    https://github.com/WalterClementsJr/tampermonkey-scripts/raw/main/youtube/youtube-quality-picker.user.js
 // @grant        GM_addStyle
 // @match        https://www.youtube.com/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==

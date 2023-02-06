@@ -5,8 +5,8 @@
 // @description  try to take over the world!
 // @author       walker
 // @match        https://fpt-software.udemy.com/course*
-// @downloadURL  https://github.com/WalterClementsJr/tampermonkey-scripts/blob/main/misc/skip-udemy.user.js
-// @updateURL    https://github.com/WalterClementsJr/tampermonkey-scripts/blob/main/misc/skip-udemy.user.js
+// @downloadURL  https://github.com/WalterClementsJr/tampermonkey-scripts/raw/main/misc/skip-udemy.user.js
+// @updateURL    https://github.com/WalterClementsJr/tampermonkey-scripts/raw/main/misc/skip-udemy.user.js
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @grant        none
 // @run-at       document-idle
