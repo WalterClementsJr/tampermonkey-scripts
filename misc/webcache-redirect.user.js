@@ -13,7 +13,8 @@
 (function() {
     'use strict';
 
-    const anchors = document.getElementsByTagName("a");
+    const body = document.querySelector("body > div:last-child");
+    const anchors = body.getElementsByTagName("a");
     const redirect = "https://webcache.googleusercontent.com/search?q=cache:";
 
     for (let i = 0; i < anchors.length; i++) {
