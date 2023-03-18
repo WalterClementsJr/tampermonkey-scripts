@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Youtube Video Quality Picker
 // @namespace    https://github.com/WalterClementsJr
-// @version      0.1.1
+// @version      0.1.2
 // @description  add buttons to select video quality in 2 clicks less
 // @author       walterwalker
-// @downloadURL  https://github.com/WalterClementsJr/tampermonkey-scripts/raw/main/youtube/youtube-quality-picker.user.js
-// @updateURL    https://github.com/WalterClementsJr/tampermonkey-scripts/raw/main/youtube/youtube-quality-picker.user.js
+// @downloadURL  https://github.com/WalterClementsJr/tampermonkey-scripts/blob/main/youtube/youtube-quality-picker.user.js
+// @updateURL    https://github.com/WalterClementsJr/tampermonkey-scripts/blob/main/youtube/youtube-quality-picker.user.js
 // @grant        GM_addStyle
 // @match        https://www.youtube.com/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
@@ -69,8 +69,8 @@
         let qualityOptions = [...document.getElementsByClassName("ytp-menuitem")];
         let selection;
 
-        if (quality == 'Highest') selection = qualityOptions[0];
-        else selection = qualityOptions.filter(el => el.innerText == quality)[0];
+        if (quality === 'Highest') selection = qualityOptions[0];
+        else selection = qualityOptions.filter(el => el.innerText.includes(quality))[0];
 
         if (!selection) {
             let qualityTexts = qualityOptions.map(el => el.innerText).join('\n');
@@ -94,7 +94,7 @@
 
         // imposible without opening the setting panel and select qualities
         // better to leave the options static
-        const qualities = ['144p', '240p', '360p', '480p', '720p'];
+        const qualities = ['144p', '240p', '360p', '480p', '720p', 'Highest'];
 
         const btnLocation = document.createElement('div');
         btnLocation.style.cssText = 'display: flex;';
@@ -106,6 +106,7 @@
 
             document.querySelector(titleCssSelector).appendChild(btnLocation);
 
+            // create buttons
             for (let i of qualities) {
                 const skipBtn = document.createElement('button');
                 skipBtn.textContent = i;
@@ -113,7 +114,6 @@
                 skipBtn.style.cursor = "pointer";
 
                 skipBtn.addEventListener('click', (async) => {
-                    console.log('skipbtn is clicked');
                     setQuality(i);
                 });
                 btnLocation.appendChild(skipBtn);
@@ -125,8 +125,9 @@
     GM_addStyle(css);
 
     window.addEventListener('yt-navigate-finish', function () {
-        console.log('page data reloaded');
-        if (window.location.href !== "https://www.youtube.com/") {
+        const pattern = 'https://www.youtube.com/watch?v=';
+        // only append picker when watching videos
+        if (window.location.href.includes(pattern)) {
             createButtons();
         }
     });
