@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WebCache redirector
 // @namespace    http://tampermonkey.net/
-// @version      0.2.1
+// @version      0.2.2
 // @description  redirect all urls to webcache
 // @author       WalterClementsJr
 // @match        https://webcache.googleusercontent.com/search*
@@ -14,7 +14,7 @@
     'use strict';
 
     let docs = [...document.querySelectorAll("body > div")];
-    docs.pop();
+    docs.shift();
 
     const redirect = "https://webcache.googleusercontent.com/search?q=cache:";
 
