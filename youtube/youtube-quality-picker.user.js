@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Youtube Video Quality Picker
 // @namespace    https://github.com/WalterClementsJr
-// @version      0.1.3
+// @version      0.1.2
 // @description  add buttons to select video quality in 2 clicks less
 // @author       walterwalker
 // @downloadURL  https://github.com/WalterClementsJr/tampermonkey-scripts/blob/main/youtube/youtube-quality-picker.user.js
@@ -14,6 +14,8 @@
 
 (function() {
     'use strict';
+
+    let alreadyCreated = false;
 
     function wait(ms) {
         return new Promise((resolve, reject) => {
@@ -90,6 +92,9 @@
 
     // create quality button selects
     async function createButtons() {
+        if (alreadyCreated) return;
+        alreadyCreated = true;
+
         await waitForVideo();
 
         // imposible without opening the setting panel and select qualities
