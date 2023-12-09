@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Youtube Video Quality Picker
 // @namespace    https://github.com/WalterClementsJr
-// @version      0.1.2
+// @version      0.1.3
 // @description  add buttons to select video quality in 2 clicks less
 // @author       walterwalker
-// @downloadURL  https://github.com/WalterClementsJr/tampermonkey-scripts/blob/main/youtube/youtube-quality-picker.user.js
-// @updateURL    https://github.com/WalterClementsJr/tampermonkey-scripts/blob/main/youtube/youtube-quality-picker.user.js
+// @downloadURL  https://github.com/WalterClementsJr/tampermonkey-scripts/raw/main/youtube/youtube-quality-picker.user.js
+// @updateURL    https://github.com/WalterClementsJr/tampermonkey-scripts/raw/main/youtube/youtube-quality-picker.user.js
 // @grant        GM_addStyle
 // @match        https://www.youtube.com/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
@@ -14,8 +14,8 @@
 
 (function() {
     'use strict';
-
-    let alreadyCreated = false;
+    let lastChosenQuality;
+    let initialized;
 
     function wait(ms) {
         return new Promise((resolve, reject) => {
@@ -54,52 +54,55 @@
         }
     };
 
-
     /**
     * Sets the quality
     * options are: "Highest" and the options available in the menu ("720p60", "480p", etc.)
     */
     async function setQuality(quality){
+        if (lastChosenQuality === quality) return
+
+        //      document.getElementsByClassName("ytp-settings-button")[0].click();
+        // [...document.getElementsByClassName("ytp-menuitem")].pop().click();
         let settingsButton = document.getElementsByClassName("ytp-settings-button")[0];
         settingsButton.click();
         await wait(500);
 
-        let qualityMenu = document.getElementsByClassName("ytp-panel-menu")[0].lastChild;
+        let qualityMenu = [...document.getElementsByClassName("ytp-menuitem")].pop();
         qualityMenu.click();
         await wait(500);
 
         let qualityOptions = [...document.getElementsByClassName("ytp-menuitem")];
         let selection;
 
-        if (quality === 'Highest') selection = qualityOptions[0];
+        if (quality == 'Highest') selection = qualityOptions[0];
         else selection = qualityOptions.filter(el => el.innerText.includes(quality))[0];
 
         if (!selection) {
-            let qualityTexts = qualityOptions.map(el => el.innerText).join('\n');
-            // close the setting wheel
+            console.log('quality not found');
+            // close settings
             settingsButton.click();
             return;
         }
 
-        if (selection.attributes['aria-checked'] === undefined) {
-            selection.click();
+        selection.click();
 
-            settingsButton.click();
-            await wait(100);
-            settingsButton.click();
-        } else settingsButton.click();
+        // close settings
+        settingsButton.click();
+        await wait(100);
+        // again
+        settingsButton.click();
     };
 
     // create quality button selects
     async function createButtons() {
-        if (alreadyCreated) return;
-        alreadyCreated = true;
+        if (initialized !== undefined) return
+        initialized = true
 
         await waitForVideo();
 
         // imposible without opening the setting panel and select qualities
         // better to leave the options static
-        const qualities = ['144p', '240p', '360p', '480p', '720p', 'Highest'];
+        const qualities = ['144p', '240p', '360p', '480p', '720p'];
 
         const btnLocation = document.createElement('div');
         btnLocation.style.cssText = 'display: flex;';
@@ -109,34 +112,31 @@
         waitForElm(titleCssSelector).then((elm) => {
             console.log('Element is ready');
 
-            const container = document
-            .querySelector(titleCssSelector)
-            .parentElement;
-            container.appendChild(btnLocation);
-            container.style.cssText += 'display: flex; flex-direction: column;';
+            let title = document.querySelector(titleCssSelector);
+            title.style.cssText += 'flex-direction: column';
+            title.appendChild(btnLocation);
 
-            // create buttons
-            for (let i of qualities) {
-                const skipBtn = document.createElement('button');
-                skipBtn.textContent = i;
-                skipBtn.classList.add('button-12');
-                skipBtn.style.cursor = "pointer";
+            for (let q of qualities) {
+                const btn = document.createElement('button');
+                btn.textContent = q;
+                btn.classList.add('button-12');
+                btn.style.cursor = "pointer";
 
-                skipBtn.addEventListener('click', (async) => {
-                    setQuality(i);
+                btn.addEventListener('click', (async) => {
+                    console.log(q + ' quality btn is selected');
+                    setQuality(q);
                 });
-                btnLocation.appendChild(skipBtn);
+                btnLocation.appendChild(btn);
             }
         });
     }
 
-    let css = ".button-12{display:flex;flex-direction:column;align-items:center;padding:6px 14px;font-family:-apple-system,BlinkMacSystemFont,Roboto,sans-serif;border-radius:6px;border:none;background:#0f0f0f;box-shadow:0 .5px 1px rgba(0,0,0,.1),inset 0 .5px .5px rgba(255,255,255,.5),0 0 0 .5px rgba(0,0,0,.12);color:#fff}";
+    let css = ".button-12 { display: flex; flex-direction: column; align-items: center; padding: 6px 14px; font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif; border-radius: 6px; border: none; background: #0f0f0f; box-shadow: 0px 0.5px 1px rgba(0, 0, 0, 0.1), inset 0px 0.5px 0.5px rgba(255, 255, 255, 0.5), 0px 0px 0px 0.5px rgba(0, 0, 0, 0.12); color: #DFDEDF; user-select: none; -webkit-user-select: none; touch-action: manipulation; } .button-12:focus { box-shadow: inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2), 0px 0.5px 1px rgba(0, 0, 0, 0.1), 0px 0px 0px 3.5px rgba(58, 108, 217, 0.5); outline: 0; }"
     GM_addStyle(css);
 
     window.addEventListener('yt-navigate-finish', function () {
-        const pattern = 'https://www.youtube.com/watch?v=';
-        // only append picker when watching videos
-        if (window.location.href.includes(pattern)) {
+        console.log('page data reloaded');
+        if (window.location.href !== "https://www.youtube.com/") {
             createButtons();
         }
     });
