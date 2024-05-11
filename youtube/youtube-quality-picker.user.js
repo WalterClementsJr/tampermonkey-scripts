@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Youtube Video Quality Picker
 // @namespace    https://github.com/WalterClementsJr
-// @version      0.1.4
+// @version      0.1.5
 // @description  add buttons to select video quality in 2 clicks less
 // @author       walterwalker
 // @downloadURL  https://github.com/WalterClementsJr/tampermonkey-scripts/raw/main/youtube/youtube-quality-picker.user.js
@@ -68,7 +68,7 @@
         await wait(500);
 
         let qualityMenu = [...document.getElementsByClassName("ytp-menuitem")]
-          .filter(i => i.innerText.toLowerCase().includes("quality"))[0];
+         .filter(i => i.innerText.toLowerCase().includes("quality"))[0];
         qualityMenu.click();
         await wait(500);
 
@@ -107,7 +107,7 @@
         const btnLocation = document.createElement('div');
         btnLocation.style.cssText = 'display: flex;';
 
-        let titleCssSelector = '.watch-active-metadata.style-scope.ytd-watch-flexy *> h1.style-scope';
+        let titleCssSelector = '#above-the-fold > #title';
 
         waitForElm(titleCssSelector).then((elm) => {
             console.log('Element is ready');
